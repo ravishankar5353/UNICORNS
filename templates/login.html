@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Government Scheme System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <h1>🇮🇳 Government Scheme Eligibility System</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('register') }}">Create Account</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </nav>
+    </header>
+
+    <main style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 100%; max-width: 450px; animation: slideUp 0.6s ease-out;">
+            <!-- Login Card -->
+            <div class="form">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 3rem; color: var(--color-saffron); margin-bottom: 1rem;">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h2 style="color: var(--color-navy); font-size: 1.8rem; margin: 0;">Welcome Back</h2>
+                    <p style="color: var(--color-gray-500); margin-top: 0.5rem;">Sign in to your account to continue</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" class="form"
+                    style="box-shadow: none; padding: 0; background: none; border: none; max-width: none;">
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Email Address</label>
+                        {{ form.email(class="form-control", placeholder="your.email@example.com") }}
+                        {% if form.email.errors %}
+                        <div class="error">
+                            <i class="fas fa-times-circle"></i>
+                            {{ form.email.errors[0] }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Password</label>
+                        {{ form.password(class="form-control", placeholder="Enter your password") }}
+                        {% if form.password.errors %}
+                        <div class="error">
+                            <i class="fas fa-times-circle"></i>
+                            {{ form.password.errors[0] }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; margin-top: 1rem;">
+                        <label
+                            style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: var(--color-gray-600); cursor: pointer; margin: 0;">
+                            <input type="checkbox" name="remember" style="width: 18px; height: 18px; cursor: pointer;">
+                            Remember me
+                        </label>
+                        <a href="#"
+                            style="color: var(--color-saffron); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Forgot
+                            password?</a>
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary btn-block btn-lg", value="Sign In Now") }}
+                </form>
+
+                <div
+                    style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--color-gray-200);">
+                    <p style="color: var(--color-gray-600); margin: 0;">Don't have an account?</p>
+                    <a href="{{ url_for('register') }}"
+                        style="color: var(--color-saffron); text-decoration: none; font-weight: 700; font-size: 1.1rem; display: inline-block; margin-top: 0.5rem;">Create
+                        Account Now</a>
+                </div>
+            </div>
+
+            <!-- Features Below Login -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                <div
+                    style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow-md); text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-saffron); margin-bottom: 0.5rem;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">Secure</h4>
+                    <p style="color: var(--color-gray-600); font-size: 0.9rem; margin: 0;">Your data is encrypted</p>
+                </div>
+                <div
+                    style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow-md); text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-saffron); margin-bottom: 0.5rem;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">Fast</h4>
+                    <p style="color: var(--color-gray-600); font-size: 0.9rem; margin: 0;">Instant results</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Compact Footer -->
+    <footer style="padding: 2rem;">
+        <div class="footer-bottom" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1rem;">
+            <p>&copy; 2024 Government Scheme Eligibility System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

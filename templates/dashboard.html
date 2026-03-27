@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Government Scheme System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <h1>🇮🇳 Government Scheme Eligibility System</h1>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('schemes') }}">All Schemes</a>
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin') }}">Admin Panel</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Welcome Section -->
+        <div class="dashboard-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 style="color: var(--color-navy); font-size: 2rem; margin: 0 0 0.5rem 0;">
+                        <i class="fas fa-wave-hand" style="color: var(--color-saffron);"></i> Welcome, {{
+                        current_user.name }}!
+                    </h2>
+                    <p style="color: var(--color-gray-600); margin: 0;">Explore government schemes tailored to your
+                        profile</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="color: var(--color-gray-500); margin: 0; font-size: 0.9rem;">
+                        <i class="fas fa-calendar"></i> {{ "now"|strftime('%B %d, %Y') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category if category != 'error' else 'danger' }}" style="margin-bottom: 2rem;">
+            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">
+                    <i class="fas fa-user-circle" style="color: var(--color-saffron); margin-right: 0.5rem;"></i> Your
+                    Profile
+                </h3>
+                <button
+                    style="background: var(--color-saffron); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: var(--radius-full); cursor: pointer; font-weight: 600; transition: all var(--transition-base);"
+                    onclick="document.querySelector('form').scrollIntoView({behavior: 'smooth'});">
+                    <i class="fas fa-edit"></i> Update Profile
+                </button>
+            </div>
+
+            <form method="POST" class="form"
+                style="max-width: 100%; margin: 0; padding: 0; box-shadow: none; background: none; border: none;">
+                {{ form.hidden_tag() }}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-birthday-cake"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Age</label>
+                        {{ form.age(class="form-control", placeholder="25") }}
+                        {% if form.age.errors %}
+                        <div class="error">{{ form.age.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-money-bill"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Annual Income (₹)</label>
+                        {{ form.income(class="form-control", placeholder="500000") }}
+                        {% if form.income.errors %}
+                        <div class="error">{{ form.income.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-list"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Social Category</label>
+                        {{ form.category(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-graduation-cap"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Education Level</label>
+                        {{ form.education(class="form-control") }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Occupation</label>
+                        {{ form.occupation(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"
+                                style="color: var(--color-saffron); margin-right: 0.5rem;"></i>Location</label>
+                        {{ form.location(class="form-control", placeholder="City/State") }}
+                        {% if form.location.errors %}
+                        <div class="error">{{ form.location.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {{ form.submit(class="btn btn-primary btn-lg", value="Save Changes") }}
+            </form>
+        </section>
+
+        <!-- Eligible Schemes Section -->
+        <section class="schemes-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">
+                    <i class="fas fa-star" style="color: var(--color-saffron); margin-right: 0.5rem;"></i> Your Eligible
+                    Schemes
+                    <span class="badge badge-primary" style="margin-left: 0.5rem;">{{ eligible_schemes|length }}</span>
+                </h3>
+                <a href="{{ url_for('schemes') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-th-large"></i> View All Schemes
+                </a>
+            </div>
+
+            {% if eligible_schemes %}
+            <div class="schemes-grid">
+                {% for scheme in eligible_schemes %}
+                <div class="scheme-card">
+                    <h4>
+                        <i class="fas fa-check-circle" style="color: var(--color-success); margin-right: 0.5rem;"></i>{{
+                        scheme.name }}
+                    </h4>
+                    <p>{{ scheme.description[:120] }}...</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        {% if scheme.income_limit %}
+                        <span class="badge badge-primary"><i class="fas fa-money-bill-wave"></i> ₹{{
+                            scheme.income_limit|float|int }}</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('scheme_details', scheme_id=scheme.id) }}" class="btn btn-primary"
+                        style="width: 100%; margin-bottom: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                    {% if scheme.application_link %}
+                    <a href="{{ scheme.application_link }}" target="_blank" class="btn btn-success"
+                        style="width: 100%;">
+                        <i class="fas fa-external-link-alt"></i> Apply Now
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div
+                style="background: var(--color-gray-50); padding: 3rem 2rem; border-radius: var(--radius-lg); text-align: center; border: 2px dashed var(--color-gray-300);">
+                <div style="font-size: 3rem; color: var(--color-gray-400); margin-bottom: 1rem;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h4 style="color: var(--color-gray-700); margin-bottom: 0.5rem;">No Eligible Schemes Yet</h4>
+                <p style="color: var(--color-gray-600); margin-bottom: 1.5rem;">Update your profile above to discover
+                    schemes you're eligible for</p>
+                <button type="button" class="btn btn-primary"
+                    onclick="document.querySelector('form').scrollIntoView({behavior: 'smooth'});">
+                    <i class="fas fa-arrow-up"></i> Update Profile
+                </button>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Stats Section -->
+        <section
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-saffron); margin-bottom: 0.5rem;">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">{{ eligible_schemes|length }} Eligible
+                    </h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">Schemes available for you</p>
+                </div>
+            </div>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-success); margin-bottom: 0.5rem;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">Always Updated</h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">Real-time scheme information
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-info); margin-bottom: 0.5rem;">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">24/7 Support</h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">Help whenever you need it</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About This Platform</h4>
+                <p>We help Indian citizens discover and access government welfare schemes they're eligible for.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('schemes') }}">All Schemes</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: support@govschemes.in</p>
+                <p>Phone: +91-XXXX-XXXX-XX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Government Scheme Eligibility System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

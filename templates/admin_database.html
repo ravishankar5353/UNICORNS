@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Overview - Government Scheme System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <h1>🇮🇳 Government Scheme Eligibility System</h1>
+        <nav>
+            <a href="{{ url_for('admin') }}">Schemes</a>
+            <a href="{{ url_for('admin_users') }}">Users</a>
+            <a href="{{ url_for('admin_database') }}" class="active">Database</a>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Page Header -->
+        <section class="admin-header">
+            <div>
+                <h2 style="color: var(--color-navy); font-size: 2rem; margin: 0 0 0.5rem 0;">
+                    <i class="fas fa-database" style="color: var(--color-saffron);"></i> Database Overview
+                </h2>
+                <p style="color: var(--color-gray-600); margin: 0;">View all system data and tables</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge badge-primary" style="font-size: 0.9rem;">
+                    <i class="fas fa-check-circle"></i> System Active
+                </span>
+            </div>
+        </section>
+
+        <!-- Database Statistics -->
+        <section
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-info); margin-bottom: 0.5rem;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">{{ users_count }}</h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">Total Users</p>
+                </div>
+            </div>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-success); margin-bottom: 0.5rem;">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">{{ profiles_count }}</h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">User Profiles</p>
+                </div>
+            </div>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; color: var(--color-saffron); margin-bottom: 0.5rem;">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">{{ schemes_count }}</h4>
+                    <p style="color: var(--color-gray-600); margin: 0; font-size: 0.9rem;">Government Schemes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tables Section -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Users Table -->
+            <section class="card">
+                <h3
+                    style="color: var(--color-navy); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1.5rem 0; padding-bottom: 1.5rem; border-bottom: 2px solid var(--color-gray-200);">
+                    <i class="fas fa-users" style="color: var(--color-saffron);"></i> Users Table
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--color-navy); color: white;">
+                            <tr>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">ID</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Email</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr style="border-bottom: 1px solid var(--color-gray-200);">
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">#{{ user.id }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-navy); font-weight: 500;">{{ user.name
+                                    }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ user.email }}</td>
+                                <td style="padding: 0.75rem;">
+                                    {% if user.role == 'admin' %}
+                                    <span class="badge badge-primary"
+                                        style="background: var(--color-saffron); color: white;">Admin</span>
+                                    {% else %}
+                                    <span class="badge badge-info">User</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- User Profiles Table -->
+            <section class="card">
+                <h3
+                    style="color: var(--color-navy); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1.5rem 0; padding-bottom: 1.5rem; border-bottom: 2px solid var(--color-gray-200);">
+                    <i class="fas fa-id-card" style="color: var(--color-saffron);"></i> User Profiles Table
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead style="background: var(--color-navy); color: white;">
+                            <tr>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">ID</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">User ID</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Age</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Income</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Category</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Education</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Occupation</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for profile in profiles %}
+                            <tr style="border-bottom: 1px solid var(--color-gray-200);">
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">#{{ profile.id }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">#{{ profile.user_id }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.age or '-' }}
+                                </td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.income or '-' }}
+                                </td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.category or '-'
+                                    }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.education or '-'
+                                    }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.occupation or '-'
+                                    }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ profile.location or '-'
+                                    }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Schemes Table -->
+            <section class="card">
+                <h3
+                    style="color: var(--color-navy); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1.5rem 0; padding-bottom: 1.5rem; border-bottom: 2px solid var(--color-gray-200);">
+                    <i class="fas fa-book" style="color: var(--color-saffron);"></i> Schemes Table
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead style="background: var(--color-navy); color: white;">
+                            <tr>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">ID</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Name</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Income Limit</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Category</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Education</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Occupation</th>
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scheme in schemes %}
+                            <tr style="border-bottom: 1px solid var(--color-gray-200);">
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">#{{ scheme.id }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-navy); font-weight: 500;">{{ scheme.name
+                                    }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">₹{{ scheme.income_limit or
+                                    '-' }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ scheme.category_required
+                                    or '-' }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{ scheme.education_required
+                                    or '-' }}</td>
+                                <td style="padding: 0.75rem; color: var(--color-gray-700);">{{
+                                    scheme.occupation_required or '-' }}</td>
+                                <td style="padding: 0.75rem;">
+                                    {% if scheme.application_link %}
+                                    <a href="{{ scheme.application_link }}" target="_blank"
+                                        class="btn btn-sm btn-primary"
+                                        style="padding: 0.4rem 0.8rem; display: inline-block;">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                    {% else %}
+                                    <span style="color: var(--color-gray-400);">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- System Info -->
+        <section class="card" style="background: var(--color-info-lighten); border: 2px solid var(--color-info);">
+            <h3 style="color: var(--color-info); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem 0;">
+                <i class="fas fa-info-circle"></i> System Information
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <small style="color: var(--color-gray-600);">Database Type</small>
+                    <p style="color: var(--color-info); font-weight: 600; margin: 0.25rem 0 0 0;">SQLite 3</p>
+                </div>
+                <div>
+                    <small style="color: var(--color-gray-600);">Framework</small>
+                    <p style="color: var(--color-info); font-weight: 600; margin: 0.25rem 0 0 0;">Flask + SQLAlchemy</p>
+                </div>
+                <div>
+                    <small style="color: var(--color-gray-600);">Total Records</small>
+                    <p style="color: var(--color-info); font-weight: 600; margin: 0.25rem 0 0 0;">{{ (users_count +
+                        profiles_count + schemes_count)|int }}</p>
+                </div>
+                <div>
+                    <small style="color: var(--color-gray-600);">Status</small>
+                    <p style="color: var(--color-success); font-weight: 600; margin: 0.25rem 0 0 0;"><i
+                            class="fas fa-check-circle"></i> Active</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Database Management</h4>
+                <p>View and manage all system data and tables.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('admin') }}">Schemes</a></li>
+                    <li><a href="{{ url_for('admin_users') }}">Users</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Government Scheme Eligibility System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
